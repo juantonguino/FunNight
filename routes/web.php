@@ -11,17 +11,78 @@
 |
 */
 
-
-
 Route::get('/', function () {
     return view('welcome');
+});
+
+
+
+Auth::routes();
+
+
+
+/*
+ *  Middleware administrador
+ **/
+Route::group(['prefix'=>'admin', 'middleware'=>['auth', 'admin']], function () {
+    Route::get('/', function () {
+        return view('welcome');
+    })->name('admin.index');
+});
+
+
+
+/*
+ * Middleware Usuario
+ * */
+Route::group(['prefix'=>'user', 'middleware'=>['auth', 'user']], function () {
+
+    Route::get('/', function () {
+        return view('inicio_usuario');
+    })->name('user.index');
+
+    Route::get('/home_user', function () {
+        return view('inicio_usuario');
+    })->name('user.home');
+
+    //SUMA UN LIKE A LA PUBLICACION.
+    Route::get('/suma_like', 'PerfilEstablecimientoController@like');
+
+    //CARGAR EL PERFIL DEL ESTABLECIMIENTO VISITADO POR UN USUARIO
+    Route::get('/perfilSeleccionado/{id}', 'PerfilEstablecimientoController@inicio');
+});
+
+
+
+/*
+ * Middleware Usuario
+ * */
+Route::group(['prefix'=>'establecimiento', 'middleware'=>['auth', 'vendor']], function () {
+    
+    /* EL ESTABLECIMIENTO CREA UNA PUBLICACION NUEVA */
+    Route::post('/publicacionNueva', 'HomeController@nuevo');
+
+    //MODIFICAR PERFIL DEL ESTABLECIMIENTO
+    Route::get('/perfil', 'perfilController@inicio');
+
+    /* SISTEMA DE RECOMENDACION POR SITIO VISITADO POR AMIGO EN COMÚN */
+    Route::get('/algoritmo1', 'RecomendacionAmigosController@index_hoy');
+
+    //CARGAR ARCHIVO DE LA UNA PUBLICACION NUEVA
+    Route::post('/ModificoFoto', 'HomeController@archivos');
+
+    /*  PERFIL ESTABLECIMIENTO  */
+    Route::get('/home', 'HomeController@index')->name('home');
+
+    //MODIFICAR PERFIL DEL ESTABLECIMIENTO
+    Route::get('/ModificoPerfilRuta', 'perfilController@inicio');
+    Route::post('/ModificoPerfil', 'perfilController@updateProfile');
+
 });
 
 Route::get('/home_user', function () {
     return view('inicio_usuario');
 });
-
-Auth::routes();
 
 Route::get('/confirmarUser', function () {
     return view('confirmarUser');

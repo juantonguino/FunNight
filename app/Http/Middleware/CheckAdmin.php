@@ -19,11 +19,11 @@ class CheckAdmin
         if(Auth::user()->role== "administrador"){
             return $next($request);
         }
-        else if(Auth::user()->role== "establecimiento"){
-            //return redirect();
-        }
         else if(Auth::user()->role== "usuario"){
-            //return redirect();
+            return redirect('/user');
+        }
+        else if(Auth::user()->role== "establecimiento"){
+            return redirect('/vendor');
         }
     }
 }
